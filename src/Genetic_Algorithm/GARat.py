@@ -1,3 +1,8 @@
+# This program's purpose is to use a genetic algorithm to help a rat find
+# its way through a map to get the block of cheese.
+
+
+
 import numpy as np
 
 def create_grid_10x10():
@@ -111,8 +116,33 @@ def print_grid(grid):
     for row in grid:
         print(*(str(cell) for cell in row))
 
-def valid_moves():
-    pass
+def valid_moves(current_pos, grid):
+    rows = len(grid)
+    cols = len(grid[0])
+    r, c = current_pos
+
+    directions = [
+        (-1, 0, 'UP'),
+        (1, 0, 'DOWN'),
+        (0, -1, 'LEFT'),
+        (0, 1, 'RIGHT'),
+        (-1, -1, 'UP_LEFT'),
+        (-1, 1, 'UP_RIGHT'),
+        (1, -1, 'DOWN_LEFT'),
+        (1, 1, 'DOWN_RIGHT')
+    ]
+
+    possible_moves = []
+
+    for r_change, c_change, move_name in directions:
+        new_r, new_c = r + r_change, c + c_change
+
+        if 0 <= new_r < rows and 0 <= new_c < cols:
+            if grid[new_r][new_c] != 1:
+                possible_moves.append((new_r, new_c))
+
+    return possible_moves
+
 
 def traverse_grid():
     pass
