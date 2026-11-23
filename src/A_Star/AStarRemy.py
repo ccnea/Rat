@@ -116,6 +116,29 @@ def find_cell(grid, label):
             if cell == label:
                 return (r, c)
     raise ValueError(f"No '{label}' found")
+
+
+def valid_moves(current_pos, grid):
+    rows = len(grid)
+    cols = len(grid[0])
+    r, c = current_pos
+ 
+    directions = [
+        (-1, 0), (1, 0), (0, -1), (0, 1),
+        (-1, -1), (-1, 1), (1, -1), (1, 1),
+    ]
+ 
+    possible_moves = []
+ 
+    for r_change, c_change in directions:
+        new_r, new_c = r + r_change, c + c_change
+ 
+        if 0 <= new_r < rows and 0 <= new_c < cols:
+            if grid[new_r][new_c] != 1:
+                possible_moves.append((new_r, new_c))
+ 
+    return possible_moves
+ 
  
  
 if __name__ == "__main__":
