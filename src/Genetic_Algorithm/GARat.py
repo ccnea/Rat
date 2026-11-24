@@ -291,9 +291,9 @@ def genetic_algorithm(grid):
 
         # if cheese was found, which generation found it?
         if final_pos == (len(grid) - 1, len(grid[0]) - 1):
-            print("Cheese found!")
-            print("Generation:", generation + 1)
-            print("Best Fitness:", best_fitness)
+            print("The rat was successful... Ratkind is saved once again!")
+            print("Generation: ", generation + 1)
+            print("Best Fitness: ", best_fitness)
             return best_rat, path
 
         # Select the top 20% of rats
@@ -329,12 +329,13 @@ def genetic_algorithm(grid):
 
         # show the fitness of every 5 generations, starting at 0.
         if generation % 5 == 0:
-            print("Generation:", generation,
-                  "Best Fitness:", best_fitness)
+            print("Generation: ", generation,
+                  "Best Fitness: ", best_fitness)
 
     # Reserved for the braindead generations
     # (If they never found the cheese, just give them a participation trophy)
-    print("Cheese was not found.")
+    print("The cheese blew up everything... it went undetected")
+
     return best_rat, path
 
 # function to get the fitness score for each rat
@@ -346,16 +347,16 @@ if __name__ == "__main__":
 
     # print the grid chosen
     grid = create_grid_50x50()
-    print("Original Grid:")
+    print("Original Grid: ")
     print_grid(grid)
 
     # run the algorithm
-    print("\nStarting Genetic Algorithm...\n")
+    print("\nStarting Genetic Algorithm :) \n")
     best_rat, path = genetic_algorithm(grid)
 
     # print the path chosen
-    print("\nGrid Showing Rat's Path:")
+    print("\nGrid Showing Rat's Path: ")
     print_path(grid, path)
 
     # print how many moves were taken
-    print("\nNumber of Moves:", len(path) - 1)
+    print("\nNumber of Moves: ", len(path) - 1)
