@@ -256,7 +256,7 @@ def genetic_algorithm(grid):
 
     # setting the parameters
     population_size = 100
-    chromosome_length = len(grid) * 4
+    chromosome_length = len(grid) * 2
     generations = 200
     mutation_rate = 0.05
 
