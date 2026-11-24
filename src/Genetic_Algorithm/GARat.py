@@ -243,9 +243,9 @@ def calculate_fitness(chromosome, grid):
     # bad moves get bad rewards
     fitness -= invalid_moves * 2
 
-    # a million billion trillion points for finding cheese
+    # a million billion trillion points for finding cheese minus a penalty for longer paths
     if final_pos == cheese:
-        fitness += 100000000000
+        fitness += 100000000000 - (len(path) * 100)
 
     # returning the fitness score
     return max(fitness, 0.1)
@@ -270,6 +270,8 @@ def genetic_algorithm(grid):
             chromosome.append(random.randint(0, 7))
         population.append(chromosome)
 
+        cheese_found = False
+
     # let's run this bih
     for generation in range(generations):
 
@@ -289,12 +291,11 @@ def genetic_algorithm(grid):
         # Was the cheese found?
         final_pos, path, invalid_moves = traverse_grid(best_rat, grid)
 
-        # if cheese was found, which generation found it?
-        if final_pos == (len(grid) - 1, len(grid[0]) - 1):
-            print("The rat was successful... Ratkind is saved once again!")
-            print("Generation: ", generation + 1)
-            print("Best Fitness: ", best_fitness)
-            return best_rat, path
+        # if cheese was found, which generation found it? Then keep going.
+        if final_pos == (len(grid) - 1, len(grid) - 1) and not cheese_found:
+            print(f"{generation + 1} generation rat found the cheese! Ratkind has been saved!:")
+            print("But can we find it faster???")
+            cheese_found = True
 
         # Select the top 20% of rats
         parents = []
@@ -329,12 +330,17 @@ def genetic_algorithm(grid):
 
         # show the fitness of every 5 generations, starting at 0.
         if generation % 5 == 0:
-            print("Generation: ", generation,
-                  "Best Fitness: ", best_fitness)
+            print("Generation: ", generation, "Best Fitness: ", best_fitness, "Steps: ", len(path) - 1)
+
+    #Did we find a more optimal path?
+    final_pos, path, invalid_moves = traverse_grid(best_rat, grid)
+    if final_pos == (len(grid) - 1, len(grid) - 1):
+        print("\nHOLY MOLY! THEY SAVED THE RAT UNIVERSE IN", len(path) - 1, "STEPS!!")
 
     # Reserved for the braindead generations
     # (If they never found the cheese, just give them a participation trophy)
-    print("The cheese blew up everything... it went undetected")
+    else:
+        print("\nThe cheese blew up everything... it went undetected")
 
     return best_rat, path
 
