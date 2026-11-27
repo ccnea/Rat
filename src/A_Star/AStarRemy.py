@@ -140,8 +140,11 @@ def valid_moves(current_pos, grid):
 def heuristic(pos, goal):
     return max(abs(pos[0] - goal[0]), abs(pos[1] - goal[1]))
 
-def traverse_grid(grid):
+def traverse_grid(grid, max_steps=None):
     start, goal = find_cell(grid, 'S'), find_cell(grid, 'C')
+    if max_steps is None:
+        max_steps = len(grid) * 2
+
     counter = 0
     open_heap = [(heuristic(start, goal), heuristic(start, goal), counter, start)]
     g_score = {start: 0}
@@ -164,6 +167,8 @@ def traverse_grid(grid):
         
         for nxt in valid_moves(current, grid):
             tentative_g = g_score[current] + 1
+            if tentative_g + heuristic(nxt, goal) > max_steps:
+                continue
             if tentative_g < g_score.get(nxt, float("inf")):
                 g_score[nxt] = tentative_g
                 came_from[nxt] = current
@@ -189,7 +194,7 @@ if __name__ == "__main__":
         path = traverse_grid(grid)
 
         if path is None:
-            print("Remy cannot reach the goal... :(")
+            print(f"Remy cannot reach the goal within {len(grid) * 2} steps... :()")
         else:
             print("Remy's path (* = steps taken): ")
             print_path(grid, path)
