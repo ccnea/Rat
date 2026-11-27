@@ -1,3 +1,5 @@
+import heapq
+
 def create_grid_10x10():
     rows, cols = 10, 10
  
@@ -25,7 +27,7 @@ def create_grid_10x10():
         grid[r][c] = 1
  
     grid[0][0] = 'S'
-    grid[9][9] = 'G'
+    grid[9][9] = 'C'
  
     return grid
  
@@ -36,8 +38,6 @@ def create_grid_5x5():
  
     coords = []
  
- 
- 
     for r in range(1, 3):
         for c in range(1, 3):
             coords.append((r, c))
@@ -46,7 +46,7 @@ def create_grid_5x5():
         grid[r][c] = 1
  
     grid[0][0] = 'S'
-    grid[4][4] = 'G'
+    grid[4][4] = 'C'
  
     return grid
  
@@ -101,7 +101,7 @@ def create_grid_50x50():
         grid[r][c] = 1
  
     grid[0][0] = 'S'
-    grid[49][49] = 'G'
+    grid[49][49] = 'C'
  
     return grid
  
@@ -109,14 +109,12 @@ def print_grid(grid):
     for row in grid:
         print(*(str(cell) for cell in row))
  
- 
 def find_cell(grid, label):
     for r, row in enumerate(grid):
         for c, cell in enumerate(row):
             if cell == label:
                 return (r, c)
     raise ValueError(f"No '{label}' found")
-
 
 def valid_moves(current_pos, grid):
     rows = len(grid)
@@ -139,13 +137,62 @@ def valid_moves(current_pos, grid):
  
     return possible_moves
  
- 
+def heuristic(pos, goal):
+    return max(abs(pos[0] - goal[0]), abs(pos[1] - goal[1]))
+
+def traverse_grid(grid):
+    start, goal = find_cell(grid, 'S'), find_cell(grid, 'C')
+    counter = 0
+    open_heap = [(heuristic(start, goal), heuristic(start, goal), counter, start)]
+    g_score = {start: 0}
+    came_from = {}
+    closed = set()
+
+    while open_heap:
+        _, _, _, current = heapq.heappop(open_heap)
+        if current in closed:
+            continue
+        closed.add(current)
+
+        if current == goal:
+            path = [current]
+            while current in came_from:
+                current = came_from[current]
+                path.append(current)
+            path.reverse()
+            return path
+        
+        for nxt in valid_moves(current, grid):
+            tentative_g = g_score[current] + 1
+            if tentative_g < g_score.get(nxt, float("inf")):
+                g_score[nxt] = tentative_g
+                came_from[nxt] = current
+                h = heuristic(nxt, goal)
+                counter += 1
+                heapq.heappush(open_heap, (tentative_g + h, h, counter, nxt))
+    return None
+
+def print_path(grid, path):
+    display = [[str(cell) for cell in row] for row in grid]
+    for r, c in path[1:-1]:
+        display[r][c] = '*'
+    for row in display:
+        print(*row)
  
 if __name__ == "__main__":
     for make_grid in (create_grid_5x5, create_grid_10x10, create_grid_50x50):
         grid = make_grid()
         print(f"{make_grid.__name__}: {len(grid)}x{len(grid[0])}")
         print_grid(grid)
-        print("Start:", find_cell(grid, 'S'), "Goal:", find_cell(grid, 'G'))
+        print("Start:", find_cell(grid, 'S'), "Goal:", find_cell(grid, 'C'))
+
+        path = traverse_grid(grid)
+
+        if path is None:
+            print("Remy cannot reach the goal... :(")
+        else:
+            print("Remy's path (* = steps taken): ")
+            print_path(grid, path)
+            print(f"Steps: {len(path) - 1}")
         print()
  
